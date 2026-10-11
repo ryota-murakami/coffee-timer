@@ -53,6 +53,29 @@ test.describe('Removed account routes', () => {
     ).toBeVisible()
   })
 
+  // Value: protects=multi-segment unknown URLs under a locale render the localized 404 (HTTP 404)
+  // fails_when=catch-all is narrowed to a single segment, so nested old URLs hit the shell-less root 404
+  // why_new=existing 404 tests only request single-segment /en/mypage and /ja/mypage; seam=none
+  // no_claim=every unknown URL shape; only one nested English path on a production build is exercised
+  test('shows the localized 404 for a deeply nested unknown URL', async ({
+    page,
+  }) => {
+    // Arrange
+    const nestedUnknownPage = '/en/mypage/history/2026/05'
+
+    // Act
+    const response = await page.goto(nestedUnknownPage)
+
+    // Assert
+    expect(response?.status()).toBe(404)
+    await expect(
+      page.getByRole('heading', { name: 'Page not found' }),
+    ).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: 'Back to timer' }),
+    ).toBeVisible()
+  })
+
   test('404 page has no WCAG 2.1 AA violations', async ({ page }) => {
     // Arrange
     await page.goto('/en/mypage')
