@@ -1,48 +1,20 @@
-import { type NextRequest, NextResponse } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
 
-const intlMiddleware = createMiddleware(routing)
-
-/** Route paths (without locale prefix) that require authentication. */
-const protectedPaths = ['/mypage']
-
 /**
- * Check if a pathname (after stripping locale prefix) matches a protected route.
+ * Next.js 16 proxy (formerly middleware) that handles locale routing for every page request.
+ * Next.js calls it for each pathname matched by `config.matcher`, before any route renders.
  *
- * @param pathname - Full request pathname e.g. "/en/mypage"
- * @returns true if the route requires auth
+ * @param request - The incoming request.
+ * @returns
+ * - A redirect to the locale-prefixed URL when the pathname has no locale
+ * - A pass-through response carrying the resolved locale otherwise
  *
  * @example
- * isProtectedRoute('/en/mypage') // => true
- * isProtectedRoute('/ja/')       // => false
+ * // GET /        -> 307 /en
+ * // GET /ja      -> rendered with the `ja` locale
  */
-function isProtectedRoute(pathname: string): boolean {
-  const withoutLocale = pathname.replace(/^\/(en|ja)/, '') || '/'
-  return protectedPaths.some((p) => withoutLocale.startsWith(p))
-}
-
-/**
- * Next.js 16 proxy (middleware) combining auth protection with i18n routing.
- * - Protected routes redirect to sign-in if no session cookie present.
- * - All non-API routes pass through next-intl middleware.
- */
-export default function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl
-
-  // Lightweight cookie check for protected routes (no DB call)
-  if (isProtectedRoute(pathname)) {
-    const sessionCookie =
-      request.cookies.get('better-auth.session_token') ??
-      request.cookies.get('__Secure-better-auth.session_token')
-    if (!sessionCookie) {
-      const locale = pathname.match(/^\/(en|ja)/)?.[1] ?? 'en'
-      return NextResponse.redirect(new URL(`/${locale}/sign-in`, request.url))
-    }
-  }
-
-  return intlMiddleware(request)
-}
+export default createMiddleware(routing)
 
 export const config = {
   // Match all pathnames except for

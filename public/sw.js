@@ -1,9 +1,10 @@
 // Service Worker for Share Timer Notifications
 // Handles notification display, click events, and offline caching
 
-const CACHE_NAME = 'share-timer-v3'
-const STATIC_CACHE = 'share-timer-static-v3'
-const DYNAMIC_CACHE = 'share-timer-dynamic-v3'
+const CACHE_PREFIX = 'share-timer-'
+const STATIC_CACHE = 'share-timer-static-v4'
+const DYNAMIC_CACHE = 'share-timer-dynamic-v4'
+const CURRENT_CACHES = [STATIC_CACHE, DYNAMIC_CACHE]
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
@@ -38,14 +39,18 @@ self.addEventListener('install', (event) => {
   self.skipWaiting()
 })
 
-// Activate event - clean up old caches
+// Activate event - delete this app's caches from earlier versions
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Activating...')
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => !name.includes('share-timer-'))
+          // Only this app's own caches; caches owned by anything else on the origin are left alone
+          .filter(
+            (name) =>
+              name.startsWith(CACHE_PREFIX) && !CURRENT_CACHES.includes(name)
+          )
           .map((name) => {
             console.log('[Service Worker] Deleting old cache:', name)
             return caches.delete(name)
@@ -216,7 +221,7 @@ self.addEventListener('fetch', (event) => {
 // Cache First Strategy - check cache first, fallback to network
 async function cacheFirstStrategy(request, cacheName) {
   try {
-    const cachedResponse = await caches.match(request)
+    const cachedResponse = await matchCurrentCaches(request)
     if (cachedResponse) {
       console.log('[Service Worker] Serving from cache:', request.url)
       return cachedResponse
@@ -249,7 +254,7 @@ async function networkFirstStrategy(request, cacheName) {
     return networkResponse
   } catch (error) {
     console.log('[Service Worker] Network failed, trying cache:', request.url)
-    const cachedResponse = await caches.match(request)
+    const cachedResponse = await matchCurrentCaches(request)
     if (cachedResponse) {
       return cachedResponse
     }
@@ -290,6 +295,31 @@ async function networkFirstStrategy(request, cacheName) {
 }
 
 // Helper functions
+
+/**
+ * Looks a request up in this app's current caches only, so a cache owned by anything else on the origin can never answer for the timer.
+ * Called by {@link cacheFirstStrategy} before the network and by {@link networkFirstStrategy} when the network fails.
+ *
+ * @param request - The request to look up.
+ * @returns
+ * - The first cached response found, searching {@link CURRENT_CACHES} in order
+ * - `undefined` when no current cache holds the request
+ *
+ * @example
+ * // '/icon-192x192.png' precached in share-timer-static-v4 -> that response
+ * // a URL stored only in some other cache on the origin   -> undefined
+ */
+async function matchCurrentCaches(request) {
+  // `cacheName` limits the search to one cache and, unlike `caches.open`, never creates it
+  for (const cacheName of CURRENT_CACHES) {
+    const cachedResponse = await caches.match(request, { cacheName })
+    if (cachedResponse) {
+      return cachedResponse
+    }
+  }
+  return undefined
+}
+
 function isStaticAsset(pathname) {
   return pathname.match(/\.(png|jpg|jpeg|gif|svg|webp|mp3|wav|ogg|webm|ico|woff|woff2|ttf|eot)$/)
 }

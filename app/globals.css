@@ -20,7 +20,6 @@
   --color-gray-700: #374151;
   --color-circle-bg: #e5e7eb;
   --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-  --progress-width: 0%;
 
   /* Glass Variables - INACTIVE by default for original themes */
   /* Note: --glass-border matches --color-circle-bg for timer visibility */
@@ -41,14 +40,6 @@
   --glass-tint-red: transparent;
   --glass-tint-blue: transparent;
   --ambient-gradient: none;
-
-  /* Heatmap Colors */
-  --heatmap-empty: #ebedf0;
-  --heatmap-level-1: rgba(4, 120, 87, 0.2);
-  --heatmap-level-2: rgba(4, 120, 87, 0.4);
-  --heatmap-level-3: rgba(4, 120, 87, 0.65);
-  --heatmap-level-4: #047857;
-  --heatmap-selected: #047857;
 }
 
 /* Dark Theme (Solid Styling) */
@@ -86,14 +77,6 @@
   --glass-tint-red: transparent;
   --glass-tint-blue: transparent;
   --ambient-gradient: none;
-
-  /* Heatmap Colors */
-  --heatmap-empty: #161b22;
-  --heatmap-level-1: rgba(16, 185, 129, 0.25);
-  --heatmap-level-2: rgba(16, 185, 129, 0.45);
-  --heatmap-level-3: rgba(16, 185, 129, 0.7);
-  --heatmap-level-4: #10b981;
-  --heatmap-selected: #10b981;
 }
 
 /* Coffee Theme (Solid Styling) */
@@ -131,14 +114,6 @@
   --glass-tint-red: transparent;
   --glass-tint-blue: transparent;
   --ambient-gradient: none;
-
-  /* Heatmap Colors */
-  --heatmap-empty: #d7ccc8;
-  --heatmap-level-1: rgba(93, 64, 55, 0.2);
-  --heatmap-level-2: rgba(93, 64, 55, 0.4);
-  --heatmap-level-3: rgba(93, 64, 55, 0.65);
-  --heatmap-level-4: #5d4037;
-  --heatmap-selected: #5d4037;
 }
 
 /* ============================================
@@ -208,14 +183,6 @@
       rgba(96, 165, 250, 0.05) 0%,
       transparent 70%
     );
-
-  /* Heatmap Colors */
-  --heatmap-empty: #ebedf0;
-  --heatmap-level-1: rgba(4, 120, 87, 0.2);
-  --heatmap-level-2: rgba(4, 120, 87, 0.4);
-  --heatmap-level-3: rgba(4, 120, 87, 0.65);
-  --heatmap-level-4: #047857;
-  --heatmap-selected: #047857;
 }
 
 /* Liquid Glass Dark Theme */
@@ -280,14 +247,6 @@
       rgba(96, 165, 250, 0.04) 0%,
       transparent 70%
     );
-
-  /* Heatmap Colors */
-  --heatmap-empty: #161b22;
-  --heatmap-level-1: rgba(16, 185, 129, 0.25);
-  --heatmap-level-2: rgba(16, 185, 129, 0.45);
-  --heatmap-level-3: rgba(16, 185, 129, 0.7);
-  --heatmap-level-4: #10b981;
-  --heatmap-selected: #10b981;
 }
 
 /* Liquid Glass Coffee Theme */
@@ -352,14 +311,6 @@
       rgba(141, 110, 99, 0.05) 0%,
       transparent 70%
     );
-
-  /* Heatmap Colors */
-  --heatmap-empty: #d7ccc8;
-  --heatmap-level-1: rgba(93, 64, 55, 0.2);
-  --heatmap-level-2: rgba(93, 64, 55, 0.4);
-  --heatmap-level-3: rgba(93, 64, 55, 0.65);
-  --heatmap-level-4: #5d4037;
-  --heatmap-selected: #5d4037;
 }
 
 /* ============================================
@@ -707,10 +658,4 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
-}
-
-/* Progress bar component styles */
-.progress-bar {
-  width: var(--progress-width);
-  transition: width 100ms linear;
 }

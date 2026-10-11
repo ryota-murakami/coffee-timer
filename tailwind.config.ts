@@ -24,14 +24,6 @@ const config: Config = {
           blue: 'var(--color-accent-blue)',
           amber: 'var(--color-accent-amber)',
         },
-        heatmap: {
-          empty: 'var(--heatmap-empty)',
-          'level-1': 'var(--heatmap-level-1)',
-          'level-2': 'var(--heatmap-level-2)',
-          'level-3': 'var(--heatmap-level-3)',
-          'level-4': 'var(--heatmap-level-4)',
-          selected: 'var(--heatmap-selected)',
-        },
       },
       boxShadow: {
         soft: 'var(--shadow-soft)',

@@ -94,7 +94,7 @@ Accordingly, for predictable automation boundaries, use one fresh Playwright pag
 
 ## Coffee Timer recording set
 
-Record focused flows instead of one long “everything” session. This repository's dedicated ingestion suite at `e2e/meticulous/recording.spec.ts` records ten isolated journeys:
+Record focused flows instead of one long “everything” session. This repository's dedicated ingestion suite at `e2e/meticulous/recording.spec.ts` records nine isolated journeys:
 
 1. Direct duration entry, plus/minus steppers, keyboard arrows, and boundaries.
 2. Start, pause, resume, and reset.
@@ -102,10 +102,9 @@ Record focused flows instead of one long “everything” session. This reposito
 4. Light, Dark, Coffee, and all deterministic Liquid Glass themes.
 5. Sound preview/selection, volume extremes, notification toggling, and a test notification.
 6. English-to-Japanese locale switching and Japanese settings UI.
-7. Rejected invalid sign-in plus sign-up form navigation without creating an account.
-8. PWA settings shortcut handling.
-9. PWA start shortcut handling.
-10. Critical timer and settings controls at the mobile viewport.
+7. PWA settings shortcut handling.
+8. PWA start shortcut handling.
+9. Critical timer and settings controls at the mobile viewport.
 
 Run the suite locally with:
 
