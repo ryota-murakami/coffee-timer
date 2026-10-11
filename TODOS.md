@@ -28,6 +28,18 @@
 **Priority:** P2
 **Depends on:** None
 
+### Local e2e can hang on the third-party recorder script
+
+**What:** Make the e2e suite independent of the Meticulous recorder, for example by blocking `snippet.meticulous.ai` in Playwright or by not injecting the snippet into builds that Playwright serves.
+
+**Why:** When a local `.env` sets `NEXT_PUBLIC_METICULOUS_PROJECT_ID`, `app/[locale]/layout.tsx` adds a synchronous `<script>` from `snippet.meticulous.ai`. If that request stalls, the page never fires `load`, `page.goto` waits for the full 30 s test timeout, and a random test fails.
+
+**Context:** Observed on 2026-10-11: 2 of 9 full `Desktop Chrome` runs lost one test each (`pwa-shortcuts`, then `glass-number-stepper`), and the Playwright trace showed the pending snippet request. CI has no `.env`, so it is not affected. Until this is fixed, build and run locally with the variable empty: `NEXT_PUBLIC_METICULOUS_PROJECT_ID= pnpm build`, then the same prefix on `pnpm e2e:desktop`. A project then takes about 18 s instead of about 40 s.
+
+**Effort:** S
+**Priority:** P2
+**Depends on:** None
+
 ### Tablet projects do not run Safari
 
 **What:** Replace `devices['iPad Pro landscape']` in `playwright.config.ts` with a descriptor that exists (for example `iPad Pro 11 landscape`) and re-baseline the tablet snapshots.
@@ -51,6 +63,18 @@
 **Context:** Measured on a production build on 2026-10-11: the body is about 5 KB with no `<html>` or `<body>` tag. URLs under `/en` and `/ja` are fine; they use `app/[locale]/not-found.tsx` through the catch-all route.
 
 **Effort:** S
+**Priority:** P3
+**Depends on:** None
+
+### Localized 404 is drawn by the browser, not by the server
+
+**What:** Decide whether unknown URLs under `/en` and `/ja` should return a server-rendered 404 document, and change the 404 setup if so.
+
+**Why:** The response for such a URL has HTTP 404 and `noindex`, but its HTML is the framework error shell (`<html id="__next_error__">` with an empty body). The heading and the link back to the timer appear only after JavaScript runs, so a visitor without JavaScript sees a blank page.
+
+**Context:** Measured on a production build on 2026-10-11 with `curl http://localhost:4319/en/mypage`; the 404 copy is only in the serialized payload. In a browser the page renders correctly, and `e2e/removed-routes.spec.ts` covers that. Next.js builds this shell when `notFound()` is thrown while rendering the page (`getErrorRSCPayload` in `next/dist/server/app-render/app-render.js`). The experimental `globalNotFound` option gives a server-rendered page, but it bypasses the locale layout, so the localized copy and the theme would need another source. Whether a different layout structure avoids the shell has not been checked.
+
+**Effort:** M
 **Priority:** P3
 **Depends on:** None
 
