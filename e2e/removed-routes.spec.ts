@@ -76,6 +76,40 @@ test.describe('Removed account routes', () => {
     ).toBeVisible()
   })
 
+  // Value: protects=old bookmarks saved without a locale prefix still reach the localized 404 (HTTP 404)
+  // fails_when=the proxy matcher or its locale redirect changes, so /mypage or /sign-in stops at the shell-less root 404
+  // why_new=every other 404 test requests a URL that already starts with /en or /ja; seam=none
+  // no_claim=locale negotiation from Accept-Language; only the default-locale redirect is exercised
+  test('redirects old bookmarks without a locale to the localized 404', async ({
+    page,
+  }) => {
+    // Arrange
+    const oldMyPageBookmark = '/mypage'
+
+    // Act
+    const myPageResponse = await page.goto(oldMyPageBookmark)
+
+    // Assert
+    expect(myPageResponse?.status()).toBe(404)
+    await expect(page).toHaveURL(/\/en\/mypage$/)
+    await expect(
+      page.getByRole('heading', { name: 'Page not found' }),
+    ).toBeVisible()
+
+    // Arrange
+    const oldSignInBookmark = '/sign-in'
+
+    // Act
+    const signInResponse = await page.goto(oldSignInBookmark)
+
+    // Assert
+    expect(signInResponse?.status()).toBe(404)
+    await expect(page).toHaveURL(/\/en\/sign-in$/)
+    await expect(
+      page.getByRole('link', { name: 'Back to timer' }),
+    ).toBeVisible()
+  })
+
   test('404 page has no WCAG 2.1 AA violations', async ({ page }) => {
     // Arrange
     await page.goto('/en/mypage')
@@ -126,19 +160,30 @@ test.describe('Removed account routes', () => {
     )
     await page.goto('/__cache-seed.html')
     const seededCaches = await page.evaluate(async () => {
+      await caches.open('share-timer-v3')
+      await caches.open('share-timer-static-v3')
       await caches.open('share-timer-dynamic-v3')
       await caches.open('sentinel-cache')
       return (await caches.keys()).sort()
     })
-    expect(seededCaches).toEqual(['sentinel-cache', 'share-timer-dynamic-v3'])
+    expect(seededCaches).toEqual([
+      'sentinel-cache',
+      'share-timer-dynamic-v3',
+      'share-timer-static-v3',
+      'share-timer-v3',
+    ])
 
     // Act
     await page.goto('/en')
 
     // Assert
     await expect
-      .poll(() => page.evaluate(() => caches.has('share-timer-dynamic-v3')))
-      .toBe(false)
+      .poll(() =>
+        page.evaluate(async () =>
+          (await caches.keys()).filter((name) => name.endsWith('-v3')),
+        ),
+      )
+      .toEqual([])
     expect(await page.evaluate(() => caches.has('sentinel-cache'))).toBe(true)
     await expect
       .poll(() =>

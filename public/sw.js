@@ -2,10 +2,9 @@
 // Handles notification display, click events, and offline caching
 
 const CACHE_PREFIX = 'share-timer-'
-const CACHE_NAME = 'share-timer-v4'
 const STATIC_CACHE = 'share-timer-static-v4'
 const DYNAMIC_CACHE = 'share-timer-dynamic-v4'
-const CURRENT_CACHES = [CACHE_NAME, STATIC_CACHE, DYNAMIC_CACHE]
+const CURRENT_CACHES = [STATIC_CACHE, DYNAMIC_CACHE]
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [

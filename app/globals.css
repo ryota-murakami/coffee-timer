@@ -20,7 +20,6 @@
   --color-gray-700: #374151;
   --color-circle-bg: #e5e7eb;
   --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.05);
-  --progress-width: 0%;
 
   /* Glass Variables - INACTIVE by default for original themes */
   /* Note: --glass-border matches --color-circle-bg for timer visibility */
@@ -659,10 +658,4 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
-}
-
-/* Progress bar component styles */
-.progress-bar {
-  width: var(--progress-width);
-  transition: width 100ms linear;
 }
