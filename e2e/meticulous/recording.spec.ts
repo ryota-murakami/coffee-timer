@@ -188,29 +188,6 @@ test.describe('Meticulous Coffee Timer journeys', () => {
     await page.getByRole('button', { name: '完了' }).click()
   })
 
-  test('rejects an invalid sign-in and navigates through sign-up without creating an account', async ({
-    page,
-  }) => {
-    // Arrange
-    await openMeticulousRecording(page, '/en')
-
-    // Act
-    await page.getByRole('link', { name: 'Sign In', exact: true }).click()
-    await page.getByLabel('Email').fill('recording@example.com')
-    await page.getByLabel('Password').fill('not-a-real-password')
-    await page.getByRole('button', { name: 'Sign In', exact: true }).click()
-    await expect(page.getByRole('alert')).toBeVisible()
-    await page.getByRole('link', { name: 'Sign Up', exact: true }).click()
-    await page.getByLabel('Name').fill('Meticulous Recording')
-    await page.getByLabel('Email').fill('recording@example.com')
-    await page.getByLabel('Password').fill('not-a-real-password')
-
-    // Assert
-    await expect(page.getByRole('heading', { name: 'Sign Up' })).toBeVisible()
-    await page.getByRole('link', { name: 'Sign In', exact: true }).click()
-    await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible()
-  })
-
   test('opens settings from the PWA settings shortcut', async ({ page }) => {
     // Arrange and Act
     await openMeticulousRecording(page, '/?action=settings')

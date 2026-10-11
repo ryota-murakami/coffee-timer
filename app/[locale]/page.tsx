@@ -1,10 +1,8 @@
 'use client'
 
 import { useState, memo, useCallback, Suspense } from 'react'
-import { Settings, User, LogOut } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { Link } from '@/i18n/navigation'
-import { authClient } from '@/lib/auth-client'
 import { useTimerStore } from '@/lib/stores/timerStore'
 import { useSettingsStore } from '@/lib/stores/settingsStore'
 import { useNotificationStore } from '@/lib/stores/notificationStore'
@@ -16,7 +14,6 @@ import { useSoundPreloader } from '@/lib/hooks/useSoundPreloader'
 import { useTimerTick } from '@/lib/hooks/useTimerTick'
 import { usePageVisibility } from '@/lib/hooks/usePageVisibility'
 import { useTimerCompletion } from '@/lib/hooks/useTimerCompletion'
-import { useTimerSessionSave } from '@/lib/hooks/useTimerSessionSave'
 import { TimerDisplay } from '@/components/timer/TimerDisplay'
 import { TimerControls } from '@/components/timer/TimerControls'
 import { TimeInput } from '@/components/timer/TimeInput'
@@ -44,10 +41,8 @@ const ShortcutHandler = memo(function ShortcutHandler({
 
 const Home = memo(function Home() {
   const t = useTranslations('App')
-  const tAuth = useTranslations('Auth')
   const tSettings = useTranslations('Settings')
   const tNotifications = useTranslations('Notifications')
-  const { data: session } = authClient.useSession()
   // Use hydration-safe hook to prevent SSR mismatches
   const timerState = useStore(useTimerStore, (state) => state)
   const settingsState = useStore(useSettingsStore, (state) => state)
@@ -84,7 +79,6 @@ const Home = memo(function Home() {
     tNotifications('timerCompleteTitle'),
     tNotifications('timerCompleteBody'),
   )
-  useTimerSessionSave(timeRemaining, initialTime, soundPreset, userSetTimeRef)
 
   /** Starts a PWA shortcut timer synchronously because ShortcutHandler has no gesture to unlock Web Audio. @returns Nothing; the timer store is updated immediately. @example handleStartFromShortcut() */
   const handleStartFromShortcut = useCallback(() => {
@@ -131,51 +125,21 @@ const Home = memo(function Home() {
       </Suspense>
 
       <div className="mx-auto w-full max-w-2xl space-y-12">
-        {/* Header with Language, Auth, and Settings */}
+        {/* Header with Language and Settings */}
         <div className="space-y-2">
           {/* Controls Row */}
           <div className="flex items-center justify-between">
             {/* Language Toggle - Left Side */}
             <LanguageToggle />
 
-            {/* Auth + Settings - Right Side */}
-            <div className="flex items-center gap-1">
-              {session ? (
-                <>
-                  <Link
-                    href="/mypage"
-                    className="rounded-full p-3 min-w-11 min-h-11 flex items-center justify-center text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-green"
-                    aria-label={tAuth('myPage')}
-                  >
-                    <User className="h-6 w-6" />
-                  </Link>
-                  <button
-                    onClick={async () => {
-                      await authClient.signOut()
-                      window.location.reload()
-                    }}
-                    className="rounded-full p-3 min-w-11 min-h-11 flex items-center justify-center text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-green cursor-pointer"
-                    aria-label={tAuth('signOut')}
-                  >
-                    <LogOut className="h-5 w-5" />
-                  </button>
-                </>
-              ) : (
-                <Link
-                  href="/sign-in"
-                  className="rounded-full px-4 py-2 min-h-11 flex items-center justify-center text-sm font-medium text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-green"
-                >
-                  {tAuth('signIn')}
-                </Link>
-              )}
-              <button
-                onClick={() => setIsSettingsOpen(true)}
-                className="rounded-full p-3 min-w-11 min-h-11 flex items-center justify-center text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-green cursor-pointer"
-                aria-label={tSettings('openSettings')}
-              >
-                <Settings className="h-6 w-6" />
-              </button>
-            </div>
+            {/* Settings - Right Side */}
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="rounded-full p-3 min-w-11 min-h-11 flex items-center justify-center text-text-secondary transition-colors hover:bg-bg-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-primary-green cursor-pointer"
+              aria-label={tSettings('openSettings')}
+            >
+              <Settings className="h-6 w-6" />
+            </button>
           </div>
 
           {/* Title */}

@@ -1,9 +1,11 @@
 // Service Worker for Share Timer Notifications
 // Handles notification display, click events, and offline caching
 
-const CACHE_NAME = 'share-timer-v3'
-const STATIC_CACHE = 'share-timer-static-v3'
-const DYNAMIC_CACHE = 'share-timer-dynamic-v3'
+const CACHE_PREFIX = 'share-timer-'
+const CACHE_NAME = 'share-timer-v4'
+const STATIC_CACHE = 'share-timer-static-v4'
+const DYNAMIC_CACHE = 'share-timer-dynamic-v4'
+const CURRENT_CACHES = [CACHE_NAME, STATIC_CACHE, DYNAMIC_CACHE]
 
 // Static assets to cache immediately
 const STATIC_ASSETS = [
@@ -38,14 +40,18 @@ self.addEventListener('install', (event) => {
   self.skipWaiting()
 })
 
-// Activate event - clean up old caches
+// Activate event - delete this app's caches from earlier versions
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Activating...')
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => !name.includes('share-timer-'))
+          // Only this app's own caches; caches owned by anything else on the origin are left alone
+          .filter(
+            (name) =>
+              name.startsWith(CACHE_PREFIX) && !CURRENT_CACHES.includes(name)
+          )
           .map((name) => {
             console.log('[Service Worker] Deleting old cache:', name)
             return caches.delete(name)
