@@ -1,3 +1,5 @@
+// `typescript` is the TypeScript 6 API (see package.json). typescript-eslint
+// still imports that package; `tsc` comes from `@typescript/native` (TypeScript 7).
 import nextConfig from 'eslint-config-next'
 import lastStanceReactNextPlugin from '@laststance/react-next-eslint-plugin'
 import { fixupConfigRules } from '@eslint/compat'
