@@ -38,7 +38,11 @@ export const useSettingsStore = create<SettingsState>()(
         set((state) => ({
           soundPreset: preset,
           lastAudibleSoundPreset:
-            preset === 'none' ? state.lastAudibleSoundPreset : preset,
+            preset === 'none'
+              ? state.soundPreset === 'none'
+                ? state.lastAudibleSoundPreset
+                : state.soundPreset
+              : preset,
         }))
       },
 

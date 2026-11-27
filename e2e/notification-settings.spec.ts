@@ -54,6 +54,40 @@ test.describe('Notification Settings', () => {
     await expect(page.getByRole('button', { name: /play test/i })).toBeEnabled()
   })
 
+  test('selecting None preserves a previously saved non-default preset', async ({
+    page,
+  }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'settings-storage',
+        JSON.stringify({
+          state: { soundPreset: 'service-bell', volume: 70 },
+          version: 0,
+        }),
+      )
+    })
+
+    await page.goto('/en')
+    await page.waitForLoadState('networkidle')
+    await page.getByRole('button', { name: /open settings/i }).click()
+
+    const soundToggle = page.getByRole('switch', {
+      name: 'Sound alerts',
+      exact: true,
+    })
+    const soundSelector = page.getByRole('combobox', {
+      name: /select sound/i,
+    })
+
+    await expect(soundSelector).toContainText('Service Bell')
+    await soundSelector.click()
+    await page.getByRole('option', { name: 'None', exact: true }).click()
+    await expect(soundToggle).not.toBeChecked()
+
+    await soundToggle.click()
+    await expect(soundSelector).toContainText('Service Bell')
+  })
+
   test('sound test initializes browser audio and requests the selected file', async ({
     page,
   }) => {
