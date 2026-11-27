@@ -20,7 +20,6 @@ import { TimeInput } from '@/components/timer/TimeInput'
 import { SettingsPanel } from '@/components/settings/SettingsPanel'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { ServiceWorkerRegistration } from '@/components/notifications/ServiceWorkerRegistration'
-import { NotificationTest } from '@/components/notifications/NotificationTest'
 
 /**
  * Component to handle PWA shortcut actions from URL parameters.
@@ -174,11 +173,6 @@ const Home = memo(function Home() {
           initialMinutes={Math.floor(initialTime / 60)}
           initialSeconds={initialTime % 60}
         />
-
-        {/* Notification Test - Development/Testing UI */}
-        <div className="mt-8 border-t border-bg-secondary pt-8">
-          <NotificationTest />
-        </div>
       </div>
 
       {/* Settings Panel */}

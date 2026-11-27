@@ -11,6 +11,7 @@ import useStore from '@/lib/hooks/useStore'
 import { SoundSelector } from './SoundSelector'
 import { VolumeControl } from './VolumeControl'
 import { NotificationToggle } from './NotificationToggle'
+import { SoundStatusControl } from './SoundStatusControl'
 import { ThemeSelector } from './ThemeSelector'
 import { GlassButton } from '@/components/ui/GlassPanel'
 
@@ -78,6 +79,7 @@ export const SettingsPanel = memo(function SettingsPanel({
               <div className="space-y-6">
                 <ThemeSelector />
                 <NotificationToggle />
+                <SoundStatusControl />
                 <SoundSelector value={soundPreset} onChange={setSoundPreset} />
                 <VolumeControl value={volume} onChange={setVolume} />
               </div>
@@ -155,6 +157,7 @@ export const SettingsPanel = memo(function SettingsPanel({
                     <div className="space-y-6">
                       <ThemeSelector />
                       <NotificationToggle />
+                      <SoundStatusControl />
                       <SoundSelector
                         value={soundPreset}
                         onChange={setSoundPreset}

@@ -29,11 +29,26 @@ class AudioManager {
   private currentSource: AudioBufferSourceNode | null = null
   private gainNode: GainNode | null = null
   private progressCallback:
-    | ((progress: number, currentTime: number, duration: number) => void)
-    | null = null
+    ((progress: number, currentTime: number, duration: number) => void) | null =
+    null
   private progressInterval: ReturnType<typeof setInterval> | null = null
   private startTime: number = 0
   private duration: number = 0
+  private listeners: Set<() => void> = new Set()
+
+  /**
+   * Subscribe to AudioContext state changes.
+   */
+  subscribe(listener: () => void): () => void {
+    this.listeners.add(listener)
+    return () => {
+      this.listeners.delete(listener)
+    }
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach((listener) => listener())
+  }
 
   /**
    * Initialize AudioContext with user gesture (e.g., Start button click)
@@ -47,6 +62,7 @@ class AudioManager {
       // Resume if suspended
       if (this.audioContext.state === 'suspended') {
         await this.audioContext.resume()
+        this.notifyListeners()
       }
       return
     }
@@ -60,6 +76,7 @@ class AudioManager {
     }
 
     this.audioContext = new AudioContextClass()
+    this.audioContext.onstatechange = () => this.notifyListeners()
     this.gainNode = this.audioContext.createGain()
     this.gainNode.connect(this.audioContext.destination)
 
@@ -67,6 +84,7 @@ class AudioManager {
     if (this.audioContext.state === 'suspended') {
       await this.audioContext.resume()
     }
+    this.notifyListeners()
 
     if (process.env.NODE_ENV !== 'production') {
       console.log('[AudioManager] Initialized successfully')
@@ -155,6 +173,7 @@ class AudioManager {
     if (this.audioContext.state === 'suspended') {
       try {
         await this.audioContext.resume()
+        this.notifyListeners()
       } catch (error) {
         console.error('[AudioManager] Failed to resume AudioContext:', error)
         return

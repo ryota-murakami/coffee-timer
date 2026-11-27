@@ -16,10 +16,12 @@ export type SoundPreset =
 interface SettingsState {
   // State
   soundPreset: SoundPreset
+  lastAudibleSoundPreset: Exclude<SoundPreset, 'none'>
   volume: number // 0-100
 
   // Actions
   setSoundPreset: (preset: SoundPreset) => void
+  setSoundEnabled: (enabled: boolean) => void
   setVolume: (volume: number) => void
 }
 
@@ -28,11 +30,32 @@ export const useSettingsStore = create<SettingsState>()(
     (set) => ({
       // Initial state
       soundPreset: 'ascending-chime',
+      lastAudibleSoundPreset: 'ascending-chime',
       volume: 70,
 
       // Actions
       setSoundPreset: (preset: SoundPreset) => {
-        set({ soundPreset: preset })
+        set((state) => ({
+          soundPreset: preset,
+          lastAudibleSoundPreset:
+            preset === 'none' ? state.lastAudibleSoundPreset : preset,
+        }))
+      },
+
+      setSoundEnabled: (enabled: boolean) => {
+        set((state) => {
+          if (enabled) {
+            return { soundPreset: state.lastAudibleSoundPreset }
+          }
+
+          return {
+            soundPreset: 'none',
+            lastAudibleSoundPreset:
+              state.soundPreset === 'none'
+                ? state.lastAudibleSoundPreset
+                : state.soundPreset,
+          }
+        })
       },
 
       setVolume: (volume: number) => {
