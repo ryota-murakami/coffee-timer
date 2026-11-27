@@ -63,9 +63,13 @@ export const NotificationToggle = memo(function NotificationToggle() {
   const handleTest = async () => {
     setIsTesting(true)
     try {
-      await audioManager.initialize()
       if (soundPreset !== 'none' && volume > 0) {
-        await audioManager.play(soundPreset, volume)
+        try {
+          await audioManager.initialize()
+          await audioManager.play(soundPreset, volume)
+        } catch (error) {
+          console.warn('[Notifications] Test sound failed:', error)
+        }
       }
       await showNotification({
         title: t('testTitle'),
