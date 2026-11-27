@@ -40,7 +40,7 @@ async function setTheme(page: Page, theme: Theme): Promise<void> {
 
 /**
  * Mocks notification to 'denied' permission for consistent VRT screenshots.
- * This ensures the NotificationTest component renders in the same state
+ * This ensures the notification settings UI renders in the same state
  * as when baselines were captured (showing "Notifications blocked" message).
  * @param page - Playwright page object
  */

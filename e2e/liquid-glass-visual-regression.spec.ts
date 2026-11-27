@@ -14,9 +14,7 @@ import { test, expect, Page } from '@playwright/test'
 
 /** Liquid Glass theme options */
 type LiquidGlassTheme =
-  | 'liquid-glass-light'
-  | 'liquid-glass-dark'
-  | 'liquid-glass-coffee'
+  'liquid-glass-light' | 'liquid-glass-dark' | 'liquid-glass-coffee'
 
 /**
  * Extracts Liquid Glass theme name from Playwright project name
@@ -42,7 +40,7 @@ async function setTheme(page: Page, theme: LiquidGlassTheme): Promise<void> {
 
 /**
  * Mocks notification to 'denied' permission for consistent VRT screenshots.
- * This ensures the NotificationTest component renders in the same state
+ * This ensures the notification settings UI renders in the same state
  * as when baselines were captured (showing "Notifications blocked" message).
  * @param page - Playwright page object
  */
