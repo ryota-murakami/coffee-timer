@@ -156,7 +156,6 @@ test.describe('Meticulous Coffee Timer journeys', () => {
     await notificationToggle.click()
     await expect(notificationToggle).toHaveAttribute('aria-checked', 'false')
     await notificationToggle.click()
-    await page.getByTestId('settings-done-button').click()
     const sendTestButton = page.getByRole('button', { name: /send test/i })
     const notificationShown = page.waitForEvent('console', {
       predicate: (message) =>
@@ -165,6 +164,7 @@ test.describe('Meticulous Coffee Timer journeys', () => {
     })
     await sendTestButton.click()
     await notificationShown
+    await page.getByTestId('settings-done-button').click()
 
     // Assert
     await expect(page.getByTestId('settings-panel')).toBeHidden()
