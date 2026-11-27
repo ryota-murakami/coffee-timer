@@ -81,7 +81,12 @@ test.describe('Notification Settings', () => {
 
     await expect(soundSelector).toContainText('Service Bell')
     await soundSelector.click()
-    await page.getByRole('option', { name: 'None', exact: true }).click()
+    await page
+      .locator('[data-radix-select-viewport]')
+      .evaluate((viewport) => viewport.scrollTo(0, viewport.scrollHeight))
+    await page
+      .getByRole('option', { name: 'None', exact: true })
+      .dispatchEvent('click')
     await expect(soundToggle).not.toBeChecked()
 
     await soundToggle.click()
